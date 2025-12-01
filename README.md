@@ -1,6 +1,6 @@
-# Project Proposal: Memory-Aware Request Scheduler for Mitigating Request Premption in LLM Serving
+### [Project Proposal]
+## Memory-Aware Request Scheduler for Mitigating Request Premption in LLM Serving
 
----
 ### Problem Statement
 
 Large Language Model (LLM) serving systems (e.g., vLLM, TGI) maximize throughput by batching requests given the available KV-cache memory. These systems manage the Key-Value (KV) cache using paging techniques (e.g., PagedAttention) to continuously fit multiple requests with varying lengths into limited GPU memory. As requests decode and generate new tokens, their context windows grow and the memory requirement expands. When the aggregate growth exceeds physical capacity, the system hits an Out-Of-Memory (OOM) state.
@@ -15,6 +15,8 @@ This problem arises under existing schedulers:
 
 As a result, even with sophisticated scheduling, LLM serving stacks can still suffer from frequent, expensive preemptions that waste a substantial fraction of available FLOPs on redundant recomputation instead of serving new user tokens.
 
+---
+
 ## Contributions
 
 GPU memory used by the KV cache at any time is largely determined by two components:  
@@ -27,6 +29,7 @@ The size of KV entries for the former is deterministic and fully known at arriva
 - Proactively avoid OOM that would trigger expensive evictions and recomputation, and  
 - When preemption is unavoidable, select victims based on their *predicted recomputation cost per unit of freed KV memory*, rather than purely on arrival time or predicted completion time.
 
+---
 
 ### Specific Objectives
 
@@ -58,5 +61,5 @@ The size of KV entries for the former is deterministic and fully known at arriva
      - `TPOT` (time per output token during decoding),
      - ``GPU_utilization`` (fraction of time the GPU is actively computing),
      - ``recompute_fraction`` (fraction of total FLOPs spent on recomputing evicted KV state).
----
+
 
