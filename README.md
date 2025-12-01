@@ -1,13 +1,15 @@
 ### [Project Proposal]
 ## Memory-Aware Request Scheduler for Mitigating Request Premption in LLM Serving
 
-![Memory-aware request scheduler overview](overview.png)
-
 ### Problem Statement
 
-Large Language Model (LLM) serving systems (e.g., vLLM, TGI) maximize throughput by batching requests given the available KV-cache memory. These systems manage the Key-Value (KV) cache using paging techniques (e.g., PagedAttention) to continuously fit multiple requests with varying lengths into limited GPU memory. As requests decode and generate new tokens, their context windows grow and the memory requirement expands. When the aggregate growth exceeds physical capacity, the system hits an Out-Of-Memory (OOM) state.
+Large Language Model (LLM) serving systems (e.g., vLLM, TGI) maximize throughput by batching requests given the available Key-Value (KV)-cache memory. These systems manage the KV cache using paging techniques (e.g., PagedAttention) to continuously fit multiple requests with varying lengths into limited GPU memory. As requests decode and generate new tokens, their context windows grow and the memory requirement expands. When the aggregate growth exceeds physical capacity, the system hits an **Out-Of-Memory (OOM)** state.
 
 A common strategy is **recomputation**: a request is evicted, its KV-cache memory freed, and later its state is recomputed by encoding/prefilling the entire token sequence so far. This can keep the GPU at high utilization (near 100%), but a significant portion of GPU compute is then spent re-calculating the same token history repeatedly rather than generating new tokens. Because the prefill phase of Transformer inference scales roughly quadratically with context length, recomputing long-context requests is especially expensive.
+
+<p align="center">
+   <img src="overview.png" alt="overview" width="90%"/>
+</p>
 
 This problem arises under existing schedulers:
 
