@@ -1,6 +1,8 @@
 ### [Project Proposal]
 ## Memory-Aware Request Scheduler for Mitigating Request Premption in LLM Serving
 
+![Memory-aware request scheduler overview](overview.png)
+
 ### Problem Statement
 
 Large Language Model (LLM) serving systems (e.g., vLLM, TGI) maximize throughput by batching requests given the available KV-cache memory. These systems manage the Key-Value (KV) cache using paging techniques (e.g., PagedAttention) to continuously fit multiple requests with varying lengths into limited GPU memory. As requests decode and generate new tokens, their context windows grow and the memory requirement expands. When the aggregate growth exceeds physical capacity, the system hits an Out-Of-Memory (OOM) state.
